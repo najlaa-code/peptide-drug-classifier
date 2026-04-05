@@ -63,41 +63,45 @@ def extract_descriptors(sequence: str):
     # ---Autocorrelation--- https://propy3.readthedocs.io/en/latest/_modules/propy/Autocorrelation.html
     # Moreau-Broto Autocorrelation
     features.update(safe_extract(
-        # protein sequence, AAProperty, AAPropertyName
-        lambda params: Autocorrelation.CalculateNormalizedMoreauBrotoAuto(sequence), sequence, "NormalizedMoreauBroto"
+        lambda params: Autocorrelation.CalculateNormalizedMoreauBrotoAutoTotal(params), sequence,
+        "NormalizedMoreauBroto"
     ))
     # Moran autocorrelation
     features.update(safe_extract(
-        lambda params: Autocorrelation.CalculateMoranAuto(params,[1]*8), sequence, "Moran"
+        lambda params: Autocorrelation.CalculateMoranAutoTotal(params), sequence, "Moran"
     ))
     # Geary autocorrelation
     features.update(safe_extract(
-        lambda params: Autocorrelation.CalculateGearyAuto(params, [1]*8), sequence, "Geary"
+        lambda params: Autocorrelation.CalculateGearyAutoTotal(params), sequence, "Geary"
     ))
 
-    #---CTD-- (combines composition, transition, and distribution)
+    # ---CTD-- (combines composition, transition, and distribution)
     features.update(safe_extract(
         CTD.CalculateCTD, sequence, "CTD"
     ))
 
+    # Clamp lag to sequence length to avoid division by zero on short sequences
+    lag = min(30, len(sequence) - 1)
+
     # ---Quasi-sequence order--- # From chapter 14,https://propy3.readthedocs.io/_/downloads/en/latest/pdf/
     # Sequence order coupling number
     features.update(safe_extract(
-        lambda params: QuasiSequenceOrder.GetSequenceOrderCouplingNumberTotal(params, maxlag=30), sequence, "SequenceOrder"
+        lambda params: QuasiSequenceOrder.GetSequenceOrderCouplingNumberTotal(params, maxlag=lag), sequence,
+        "SequenceOrder"
     ))
     # Quasi-sequence order descriptors
     features.update(safe_extract(
-        lambda params: QuasiSequenceOrder.GetQuasiSequenceOrder(params), sequence, "QuasiSequence"
+        lambda params: QuasiSequenceOrder.GetQuasiSequenceOrder(params, maxlag=lag), sequence, "QuasiSequence"
     ))
 
-    #---Pseudo amino acid compostion
+    # ---Pseudo amino acid compostion
     # Pseudo amino acid composition
     features.update(safe_extract(
-        lambda params: PseudoAAC.GetPseudoAAC(params, lamda=30, weight=0.05), sequence, "PseudoAAC"
+        lambda params: PseudoAAC.GetPseudoAAC(params, lamda=lag, weight=0.05), sequence, "PseudoAAC"
     ))
     # Amphiphilic pseudo amino acid composition
     features.update(safe_extract(
-        lambda params: PseudoAAC.GetAPseudoAAC(params, lamda=30, weight=0.05), sequence, "APseudoAAC"
+        lambda params: PseudoAAC.GetAPseudoAAC(params, lamda=lag, weight=0.05), sequence, "APseudoAAC"
     ))
     return features
 
@@ -124,11 +128,11 @@ def main(input_path: str, output_path:str) -> None:
             failed.append(index)
             continue
 
-    descriptors = extract_descriptors(seq_clean)
-    descriptors["SequenceIndex"] = index
-    descriptors["Sequence"] = seq_clean
-    descriptors["Class"] = label
-    rows.append(descriptors)
+        descriptors = extract_descriptors(seq_clean)
+        descriptors["SequenceIndex"] = index
+        descriptors["Sequence"] = seq_clean
+        descriptors["Class"] = label
+        rows.append(descriptors)
     # export it to CSV
     df_feat = pd.DataFrame(rows)
     meta_cols = ["SequenceIndex", "Sequence", "Class"]
