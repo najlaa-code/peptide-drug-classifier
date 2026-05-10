@@ -61,5 +61,3 @@ coef_df.columns = ["feature", "lasso_coefficient"]
 coef_df["kept"] = coef_df["lasso_coefficient"] != 0
 coef_df = coef_df.sort_values("lasso_coefficient", key=abs, ascending=False)
 coef_df.to_csv(OUT_COEF, index=False) # False means it was excluded, true means LASSO kept the feature.
-
-
