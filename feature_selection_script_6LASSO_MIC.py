@@ -63,38 +63,3 @@ coef_df = coef_df.sort_values("lasso_coefficient", key=abs, ascending=False)
 coef_df.to_csv(OUT_COEF, index=False) # False means it was excluded, true means LASSO kept the feature.
 
 
-
-
-
-# Plot 1: Coefficient Path Plot
-from sklearn.linear_model import lasso_path
-alphas_path, coefs_path, _ = lasso_path(X, y, alphas=lasso.alphas_, max_iter=10_000)
-fig, ax = plt.subplots(figsize=(12,6))
-for coef_row in coefs_path:
-    ax.plot(alphas_path, coef_row, linewidth=0.7, alpha=0.6)
-ax.axvline(lasso.alpha_, color="black", linestyle="--", linewidth=1.5,
-           label=f"Selected α = {lasso.alpha_:.5f}")
-ax.set_xscale("log")
-ax.invert_xaxis()  # convention: left = high regularization, right = low
-ax.set_xlabel("α (log scale, decreasing →)")
-ax.set_ylabel("Coefficient value")
-ax.set_title("LASSO Regularization Path (post-mRMR features) (MIC)")
-ax.legend()
-plt.tight_layout()
-
-OUT_PATH_PLOT = os.path.join(BASE_DIR, "lasso_path_plot.png")
-plt.savefig(OUT_PATH_PLOT, dpi=150)
-plt.close()
-print(f"Saved path plot → {OUT_PATH_PLOT}")
-
-# ── PLOT 2: Bar Chart of Surviving Feature Coefficients ───────────────────────
-fig, ax = plt.subplots(figsize=(10, max(4, len(surviving_features) * 0.3)))
-colors = ["steelblue" if v > 0 else "tomato" for v in surviving_features.values]
-ax.barh(surviving_features.index, surviving_features.values, color=colors)
-ax.set_xlabel("LASSO Coefficient")
-ax.set_title(f"Surviving Features after mRMR + LASSO  (α = {lasso.alpha_:.5f}) (MIC)")
-ax.axvline(0, color="black", linewidth=0.8)
-plt.tight_layout()
-
-plt.savefig(OUT_PLOT, dpi=150)
-plt.close()
