@@ -1,4 +1,5 @@
 """
+ATTENTION: THIS SCRIPT IS NOT USED ANYMORE. SCRIPT 5 AND 6 ARE REPLACING IT.
 This script implements LASSO regression from Scikit-Learn and it follows previous inputs from feature selection and mRMR.
 This outputs 2 CSV files:
     1) All surviving features.
