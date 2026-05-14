@@ -12,12 +12,13 @@ import traceback
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from feature_engine.selection import MRMR
-#debugging
 import time
 
-META_COLUMNS = ["SequenceIndex", "Sequence", "Class"]
+#META_COLUMNS = ["SequenceIndex", "Sequence", "Class"]
+META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic"]
 
-def main(input_path: str, output_path:str, max_features:int):
+
+def main(input_path: str, output_path:str, max_features:int, target: str):
     print("Debugging 1: loading data or not")
     try:
         df = pd.read_csv(input_path)
@@ -31,7 +32,7 @@ def main(input_path: str, output_path:str, max_features:int):
         sys.exit(1)
     feature_columns = [column for column in df.columns if column not in META_COLUMNS]
     x = df[feature_columns]
-    y = df["Class"]
+    y = df[target]
     print("Debugging 3: feature columns")
 
     # Drop columns with 0 variance values
@@ -42,13 +43,13 @@ def main(input_path: str, output_path:str, max_features:int):
     print(f"Debugging 5: afterdropping zero-variance columns. Length: {len(x.columns)}.")
     maximum_features = min(max_features, len(x.columns)) # to remove maybe? this is for debugging to cap the max_features to the available features, as 1547 bugs and comes down to 1528
     x_train, x_test, y_train, y_test = train_test_split(
-        x, y, test_size = 0.2, random_state = 42, stratify=y
+        x, y, test_size = 0.2, random_state = 42
     )
     print(f"Debugging 6: Train size: {len(x_train)}, Test size: {len(x_test)}")
     sel = MRMR(
         method="MID",
         #method="FCQ",
-        regression=False,
+        regression=True, #changing due to continuous targets
         #max_features=max_features,
         max_features=maximum_features,
     )
@@ -79,9 +80,10 @@ if __name__ == "__main__":
     parser.add_argument("--input", "-i", default="features_scaled.csv", help="Input CSV from Script 2")
     parser.add_argument("--output", "-o", default="features_mrmr.csv", help="Output CSV")
     parser.add_argument("--max_features", "-n", type=int, default=248, help="Number of features to select")
+    parser.add_argument("--target", "-t", choices=["log10hc50", "log10mic"], required=True)
     args = parser.parse_args()
     try:
-        main(args.input, args.output, args.max_features)
+        main(args.input, args.output, args.max_features, args.target)
     except Exception:
         traceback.print_exc()
         sys.exit(1)
