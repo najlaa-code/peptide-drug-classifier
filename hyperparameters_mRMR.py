@@ -9,7 +9,7 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import SelectKBest, f_classif
 
-df = pd.read_csv("features_scaled.csv")  # pre-mRMR, all ~1529 features
+df = pd.read_csv("features_scaled_2.csv")
 
 META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic"]
 feature_columns = [col for col in df.columns if col not in META_COLUMNS]
@@ -21,7 +21,7 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
 pipeline = Pipeline([
     ('scaler', StandardScaler()),
-    ('feature_selection', SelectKBest(score_func=f_classif)),  # runs inside each fold
+    ('feature_selection', SelectKBest(score_func=f_classif)),
     ('classifier', SVC(kernel='rbf', class_weight='balanced'))
 ])
 
