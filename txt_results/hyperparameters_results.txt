@@ -1,0 +1,4 @@
+Best k:                400
+Best C:                1
+Best gamma:            scale
+Best balanced accuracy: 0.5698
