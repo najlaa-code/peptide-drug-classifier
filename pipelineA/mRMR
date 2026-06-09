@@ -5,6 +5,9 @@ Feature selection script 3: mRMR
 - finds features wtih low redundancy with each other
 input: since this is pipeline A, features from feature extraction propy3
 output: features_mrmr.csv
+run with this command
+python3 pipeline_A_mRMR.py -i features_scaled_pipeline_A.csv -o features_mRMR_pipeline_A_mic.csv -t log10mic 
+python3 pipeline_A_mRMR.py -i features_scaled_pipeline_A.csv -o features_mRMR_pipeline_A_mic.csv -t log10hc50
 """
 
 import argparse
