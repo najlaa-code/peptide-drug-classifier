@@ -5,9 +5,6 @@ Feature selection script 3: mRMR
 - finds features wtih low redundancy with each other
 input: since this is pipeline A, features from feature extraction propy3
 output: features_mrmr.csv
-run with this command
-python3 pipeline_A_mRMR.py -i features_scaled_pipeline_A.csv -o features_mRMR_pipeline_A_mic.csv -t log10mic 
-python3 pipeline_A_mRMR.py -i features_scaled_pipeline_A.csv -o features_mRMR_pipeline_A_mic.csv -t log10hc50
 """
 
 import argparse
@@ -17,6 +14,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from feature_engine.selection import MRMR
 import time
+from sklearn.feature_selection import mutual_info_regression
 
 #META_COLUMNS = ["SequenceIndex", "Sequence", "Class"]
 META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic", "Split"]
@@ -82,6 +80,12 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
 
     selected = [f for f in feature_columns_kept if f not in sel.features_to_drop_]
     print(f"Selected {len(selected)} features.")
+
+    print("Debugging 7/2: ranking the features")
+    mi_scores = mutual_info_regression(x_train[selected], y_train, random_state=42)
+    mi_ranking = pd.Series(mi_scores, index=selected).sort_values(ascending=False)
+    print("Top 10 features by relevance:")
+    print(mi_ranking.head(10))
 
     # apply the same transformations to all rows
     df_out= df[[column for column in META_COLUMNS if column in df.columns]].copy()
