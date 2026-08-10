@@ -45,7 +45,7 @@ df = pd.read_csv(INPUT_CSV)
 LABEL_COL = "Class" # this is the target column ("selective" "inactive" etc.)
 ID_COL = ["SequenceIndex", "Sequence"] # this is for the columns that are non-features
 TARGET = "log10mic"
-META = [LABEL_COL, "log10hc50", "log10mic"] + [c for c in ID_COL if c in df.columns]
+META = [LABEL_COL, "log10hc50", "log10mic", "Split"] + [c for c in ID_COL if c in df.columns]
 drop_cols = [c for c in META if c in df.columns]
 
 X = df.drop(columns=drop_cols)
