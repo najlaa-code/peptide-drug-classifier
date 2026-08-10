@@ -1,6 +1,5 @@
 """Feature Selection
 fitting std scaler only on training set, as part of Pipeline A
-ran with this cmd: python3 pipeline_A_scaling.py -i features_raw_prepped_A.csv -o features_scaled_pipeline_A.csv
 """
 import sys
 import argparse
