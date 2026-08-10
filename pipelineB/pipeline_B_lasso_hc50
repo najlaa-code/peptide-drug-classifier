@@ -45,7 +45,7 @@ df = pd.read_csv(INPUT_CSV)
 LABEL_COL = "Class" # this is the target column ("selective" "inactive" etc.)
 ID_COL = ["SequenceIndex", "Sequence"] # this is for the columns that are non-features
 TARGET = "log10hc50"
-META = [LABEL_COL, "log10hc50", "log10mic"] + [c for c in ID_COL if c in df.columns]
+META = [LABEL_COL, "log10hc50", "log10mic", "Split"] + [c for c in ID_COL if c in df.columns]
 drop_cols = [c for c in META if c in df.columns]
 
 X = df.drop(columns=drop_cols)
@@ -104,7 +104,7 @@ ax.axvline(lasso.alpha_, color="black", linestyle="--", linewidth=1.5,
            label=f"Selected α = {lasso.alpha_:.5f}")
 ax.set_xscale("log")
 ax.invert_xaxis()  # convention: left = high regularization, right = low
-ax.set_xlabel("α (log scale, decreasing →)")
+ax.set_xlabel("α (log scale, decreasing -->)")
 ax.set_ylabel("Coefficient value")
 ax.set_title("LASSO Regularization Path (post-mRMR features) (HC50)")
 ax.legend()
@@ -113,7 +113,7 @@ plt.tight_layout()
 OUT_PATH_PLOT = os.path.join(BASE_DIR, "lasso_path_plot_pipeline_B_hc50")
 plt.savefig(OUT_PATH_PLOT, dpi=150)
 plt.close()
-print(f"Saved path plot → {OUT_PATH_PLOT}")
+print(f"Saved path plot --> {OUT_PATH_PLOT}")
 
 # ── PLOT 2: Bar Chart of Surviving Feature Coefficients ───────────────────────
 fig, ax = plt.subplots(figsize=(10, max(4, len(surviving_features) * 0.3)))
@@ -126,7 +126,7 @@ plt.tight_layout()
 
 plt.savefig(OUT_PLOT, dpi=150)
 plt.close()
-print(f"Saved bar chart → {OUT_PLOT}")
+print(f"Saved bar chart --> {OUT_PLOT}")
 
 # ── PLOT 1a: Coefficient Path - Top 10 features (largest abs coef at chosen alpha) ──
 from sklearn.linear_model import lasso_path
@@ -150,7 +150,7 @@ ax.axvline(lasso.alpha_, color="black", linestyle="--", linewidth=1.5,
            label=f"Selected α = {lasso.alpha_:.5f}")
 ax.set_xscale("log")
 ax.invert_xaxis()
-ax.set_xlabel("α (log scale, decreasing →)")
+ax.set_xlabel("α (log scale, decreasing -->)")
 ax.set_ylabel("Coefficient value")
 ax.set_title("LASSO Path — Top 10 Features by |Coefficient| (HC50)")
 ax.legend(fontsize=8, loc="best")
@@ -158,7 +158,7 @@ plt.tight_layout()
 OUT_PATH_TOP10 = os.path.join(BASE_DIR, "lasso_path_top10_pipeline_B_hc50")
 plt.savefig(OUT_PATH_TOP10, dpi=150)
 plt.close()
-print(f"Saved top 10 path plot → {OUT_PATH_TOP10}")
+print(f"Saved top 10 path plot --> {OUT_PATH_TOP10}")
 
 # ── PLOT 1b: Coefficient Path - Bottom 10 features (smallest abs coef at chosen alpha) ──
 fig, ax = plt.subplots(figsize=(12, 6))
@@ -168,7 +168,7 @@ ax.axvline(lasso.alpha_, color="black", linestyle="--", linewidth=1.5,
            label=f"Selected α = {lasso.alpha_:.5f}")
 ax.set_xscale("log")
 ax.invert_xaxis()
-ax.set_xlabel("α (log scale, decreasing →)")
+ax.set_xlabel("α (log scale, decreasing -->)")
 ax.set_ylabel("Coefficient value")
 ax.set_title("LASSO Path — Bottom 10 Features by |Coefficient| (HC50)")
 ax.legend(fontsize=8, loc="best")
@@ -176,7 +176,7 @@ plt.tight_layout()
 OUT_PATH_BOT10 = os.path.join(BASE_DIR, "lasso_path_bottom10_pipeline_B_hc50")
 plt.savefig(OUT_PATH_BOT10, dpi=150)
 plt.close()
-print(f"Saved bottom 10 path plot → {OUT_PATH_BOT10}")
+print(f"Saved bottom 10 path plot --> {OUT_PATH_BOT10}")
 
 # ── PLOT 2a: Bar Chart - Top 10 surviving features ────────────────────────────
 top10_surviving = surviving_features.reindex(
@@ -192,7 +192,7 @@ plt.tight_layout()
 OUT_BAR_TOP10 = os.path.join(BASE_DIR, "lasso_bar_top10_pipeline_B_hc50")
 plt.savefig(OUT_BAR_TOP10, dpi=150)
 plt.close()
-print(f"Saved top 10 bar chart → {OUT_BAR_TOP10}")
+print(f"Saved top 10 bar chart --> {OUT_BAR_TOP10}")
 
 # ── PLOT 2b: Bar Chart - Bottom 10 surviving features ─────────────────────────
 bottom10_surviving = surviving_features.reindex(
@@ -208,7 +208,7 @@ plt.tight_layout()
 OUT_BAR_BOT10 = os.path.join(BASE_DIR, "lasso_bar_bottom10_pipeline_B_hc50")
 plt.savefig(OUT_BAR_BOT10, dpi=150)
 plt.close()
-print(f"Saved bottom 10 bar chart → {OUT_BAR_BOT10}")
+print(f"Saved bottom 10 bar chart --> {OUT_BAR_BOT10}")
 
 # ── PLOT 2c: Bar Chart - All surviving features ────────────────────────────────
 fig, ax = plt.subplots(figsize=(10, max(4, len(surviving_features) * 0.3)))
@@ -220,7 +220,7 @@ ax.axvline(0, color="black", linewidth=0.8)
 plt.tight_layout()
 plt.savefig(OUT_PLOT, dpi=150)
 plt.close()
-print(f"Saved full bar chart → {OUT_PLOT}")
+print(f"Saved full bar chart --> {OUT_PLOT}")
 # ── PLOT 3: Correlation Heatmap of Surviving Features ─────────────────────────
 import seaborn as sns
 
@@ -245,7 +245,7 @@ plt.tight_layout()
 OUT_HEATMAP = os.path.join(BASE_DIR, "lasso_correlation_heatmap_pipeline_B_hc50")
 plt.savefig(OUT_HEATMAP, dpi=150)
 plt.close()
-print(f"Saved heatmap → {OUT_HEATMAP}")
+print(f"Saved heatmap --> {OUT_HEATMAP}")
 # ── PLOT 4: Correlation Heatmap of Excluded Features (194) ────────────────────
 excluded_df = df[list(excluded_features_after_LASSO.index)]
 corr_matrix_excl = excluded_df.corr()
@@ -269,4 +269,4 @@ plt.tight_layout()
 OUT_HEATMAP_EXCL = os.path.join(BASE_DIR, "lasso_correlation_heatmap_excluded_pipeline_B_hc50")
 plt.savefig(OUT_HEATMAP_EXCL, dpi=150)
 plt.close()
-print(f"Saved excluded heatmap → {OUT_HEATMAP_EXCL}")
+print(f"Saved excluded heatmap --> {OUT_HEATMAP_EXCL}")
