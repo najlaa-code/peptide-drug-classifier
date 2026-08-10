@@ -46,7 +46,7 @@ print(classification_report(y_test, y_pred))
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 cv_scores = cross_val_score(svm, X_train, y_train, cv=cv, scoring="f1_weighted")
 print(f"Mean of cross-validation scores: {cv_scores.mean():.3f}")
-print(f"Standard deviation fo cross-validation scores: {cv_scores.std():.3f}")
+print(f"Standard deviation of cross-validation scores: {cv_scores.std():.3f}")
 
 #confusion matrix for FP, FN, TP and TN
 # cm stands for confusion matrix
