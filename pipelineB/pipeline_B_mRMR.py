@@ -16,7 +16,7 @@ import time
 from sklearn.feature_selection import mutual_info_regression
 
 #META_COLUMNS = ["SequenceIndex", "Sequence", "Class"]
-META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic"]
+META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic", "Split"]
 
 
 def main(input_path: str, output_path:str, max_features:int, target: str):
