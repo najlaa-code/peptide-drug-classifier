@@ -8,8 +8,6 @@ from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import os
-import json
-import joblib
 import numpy as np
 import shap
 
@@ -83,11 +81,6 @@ svm_probability = SVC(
     random_state=42
 )
 svm_probability.fit(X_train, y_train)
-joblib.dump(svm_probability, os.path.join(BASE_DIR, "svm_pipeline_A_mic.joblib"))
-with open(os.path.join(BASE_DIR, "svm_pipeline_A_mic_meta.json"), "w") as f:
-    json.dump({"feature_names": list(X_train.columns),
-               "classes": list(svm.classes_.astype(str))}, f, indent=2)
-
 # config vars
 K_BACKGROUND = 25
 N_PER_CLASS  = 30
