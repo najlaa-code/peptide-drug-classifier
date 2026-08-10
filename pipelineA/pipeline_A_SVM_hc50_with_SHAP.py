@@ -8,8 +8,6 @@ from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 import os
-import json
-import joblib
 import numpy as np
 import shap
 
@@ -61,7 +59,7 @@ cm = confusion_matrix(y_test, y_pred, labels=svm.classes_)
 fig, ax = plt.subplots(figsize=(10, 8))
 disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=svm.classes_)
 disp.plot(ax=ax, xticks_rotation=45, colorbar=True, cmap="RdPu", values_format="d")
-disp.im_.colorbar.set_label("Number of peptides", fontsize=13) # color bar label
+disp.im_.colorbar.set_label("Number of peptides", fontsize=13)
 
 ax.set_xlabel("Predicted Class", fontsize=14)
 ax.set_ylabel("True Class", fontsize=14)
@@ -70,10 +68,6 @@ ax.set_title("SVM Confusion Matrix Pipeline A (HC50 features)", fontsize=14)
 plt.tight_layout()
 plt.savefig(OUT_CM, dpi=150)
 plt.close()
-print(f"Saved confusion matrix --> {OUT_CM}")
-
-
-# SHAP
 svm_probability = SVC(
     kernel = "rbf",
     C=1.0,
@@ -83,12 +77,6 @@ svm_probability = SVC(
     random_state=42
 )
 svm_probability.fit(X_train, y_train)
-joblib.dump(svm_probability, os.path.join(BASE_DIR, "svm_pipeline_A_hc50.joblib"))
-with open(os.path.join(BASE_DIR, "svm_pipeline_A_hc50_meta.json"), "w") as f:
-    json.dump({"feature_names": list(X_train.columns),
-               "classes": list(svm.classes_.astype(str))}, f, indent=2)
-
-# config vars
 K_BACKGROUND = 25
 N_PER_CLASS  = 30
 TOPN         = 15
