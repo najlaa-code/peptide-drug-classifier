@@ -1,6 +1,3 @@
-"""
-This file fixes the previous mistake where the log hc50 and mic values were not merged properly. This is before the split for Pipeline A.
-"""
 import argparse
 import sys
 import pandas as pd
