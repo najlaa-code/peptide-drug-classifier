@@ -1,3 +1,11 @@
+"""
+Pipeline B Train/Test Split Script
+
+Adds a "Split" column ("train"/"test") to the dataset, one single split used by everything downstream in 
+Pipeline A (mRMR, LASSO, SVM, etc. all read this same column so the split stays consistent across the whole 
+pipeline).
+
+"""
 import argparse
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -12,7 +20,6 @@ def main(input_path, output_path, test_size, random_state):
     df.loc[test_idx, "Split"] = "test"
     print(f"train: {(df['Split'] == 'train').sum()}, test: {(df['Split'] == 'test').sum()}")
     df.to_csv(output_path, index=False)
-    print(f"File saved in this path: {output_path}")
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
