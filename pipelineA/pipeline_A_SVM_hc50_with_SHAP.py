@@ -8,6 +8,7 @@ it to see which descriptors are actually driving the predictions. Special emphas
 majority class.
 
 Input:
+- lasso_pipeline_A_HC50_features.csv
 
 Output:
 - prints to the console: train/test sizes, feature count, classification report, mean, +/- std of 5-fold CV 
