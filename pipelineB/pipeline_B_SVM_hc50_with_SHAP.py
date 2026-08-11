@@ -1,10 +1,26 @@
 """
-SVM for pipeline B (HC50) along with SHAP
+"""
+SVM for pipeline A (HC50) along with SHAP
 
-PREREQUISITE: pipeline_B_lasso_hc50.py must carry the 'Split' column into
-its output (add "Split" to its META list) -- this script does not
-re-split, it reuses whatever partition was assigned back in
-pipeline_B_split.py and disseminated through mRMR and LASSO.
+Trains an SVM (RBF kernel, class_weight="balanced") on the LASSO-selected HC50
+features from pipeline A, using the same train/test split as before. Reports
+classification metrics, 5-fold CV, and saves a confusion matrix plot.
+
+Also trains a second SVM (same parameters, probability=True since KernelExplainer
+needs predict_proba) and runs SHAP on it to see which descriptors are actually
+driving the predictions, with special emphasis on the minority class against the
+majority class.
+
+Inputs:
+- lasso_pipeline_A_HC50_features.csv
+Output:
+- prints to the console: train/test sizes, feature count, classification report,
+  mean +/- std of 5-fold CV weighted F1, top-15 descriptors for the rare class,
+  top-15 for the majority class, shared descriptor count + Jaccard overlap
+- svm_confusion_matrix_pipeline_A_HC50.png
+- shap_pipeline_A_hc50_mean_abs.csv
+- shap_bar_pipeline_A_HC50_<class>.png (one bar plot per class)
+"""
 """
 import pandas as pd
 from sklearn.svm import SVC
