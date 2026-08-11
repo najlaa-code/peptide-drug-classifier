@@ -1,5 +1,23 @@
 """
-SVM for pipeline B (MIC) along with SHAP
+SVM for pipeline A (MIC) along with SHAP
+
+Trains an SVM (RBF, class_weight="balanced") on the LASSO-selected MIC features
+from pipeline A, using the same train/test split as the rest of pipeline A. Reports
+classification metrics + 5-fold CV, and saves a confusion matrix plot.
+
+Trains a 2nd SVM (same parameters, probability=True since KernelExplainer needs
+predict_proba). Runs SHAP on it to see which descriptors are actually driving the
+predictions, with special emphasis on the minority against the majority class.
+
+Input:
+- lasso_pipeline_A_MIC_features.csv
+Output:
+- prints to the console: train/test sizes, feature count, classification report,
+  mean +/- std of 5-fold CV weighted F1, top-15 descriptors for the rare class,
+  top-15 for the majority class, shared descriptor count + Jaccard overlap
+- svm_confusion_matrix_pipeline_A_MIC.png
+- shap_pipeline_A_mic_mean_abs.csv
+- shap_bar_pipeline_A_MIC_<class>.png (one bar plot per class)
 """
 import pandas as pd
 from sklearn.svm import SVC
