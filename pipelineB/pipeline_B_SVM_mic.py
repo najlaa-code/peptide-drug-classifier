@@ -1,6 +1,15 @@
 """
-SVM for pipeline B mic
-MORE HERE
+SVM for pipeline B (MIC)
+
+Trains an SVM (RBF, class_weight="balanced") on the LASSO-selected MIC features from pipeline B. Unlike pipeline A, the 
+train/test split happens directly in this script rather than being carried over from an earlier step. Reports classification 
+metrics + 5-fold CV, and saves a confusion matrix plot.
+
+Input:
+- lasso_pipeline_B_MIC_features.csv
+Output:
+- Prints to the console: train/test sizes, feature count, classification report, mean +/- std of 5-fold CV weighted F1
+- svm_confusion_matrix_pipeline_B_MIC.png
 """
 import pandas as pd
 from sklearn.svm import SVC
