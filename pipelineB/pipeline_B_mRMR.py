@@ -1,12 +1,22 @@
-
 """
-Feature selection script 3: mRMR
-- finds features with high relevance to the drug class
-- finds features wtih low redundancy with each other
-input: since this is pipeline A, features from feature extraction propy3
-output: features_mrmr.csv
-"""
+Pipeline B mRMR
 
+Uses mRMR (Minimum Redundancy Maximum Relevance) to pick features that are strongly related to the target 
+(log10hc50 or log10mic) but not too redundant with each other. Fits on the full dataset (no train/test split).
+Notes:
+- Zero-variance columns get dropped from the features before mRMR runs.
+- MID method is used (mutual information)
+- mRMR is very slow, it takes about 2 hours to run on the full descriptor set.
+Input:
+- CSV from Script 1 (feature extraction), needs the meta columns 
+(SequenceIndex, Sequence, Class, log10hc50, log10mic, Split)
+- --target: log10hc50 or log10mic (required)
+- --max_features: how many features to keep (default 400)
+Output:
+- CSV with the meta columns + the selected features, for all rows, written to --output
+- Printed: row/column counts, zero-variance columns dropped, full dataset size, number of features selected, 
+mRMR runtime, top 10 features by mutual information
+"""
 import argparse
 import sys
 import traceback
@@ -20,13 +30,13 @@ META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic", "
 
 
 def main(input_path: str, output_path:str, max_features:int, target: str):
-    print("Debugging 1: loading data or not")
+    print("Loading data")
     try:
         df = pd.read_csv(input_path)
     except Exception:
         print(f"Error: the file '{input_path}' could not be loaded.")
         sys.exit(1)
-    print(f"Debugging 2: data is loaded. Rows: {len(df)} and columns: {len(df.columns)}.")
+    print(f"Data is loaded. Rows: {len(df)} and columns: {len(df.columns)}.")
     missing_columns = [column for column in META_COLUMNS if column not in df.columns]
     if missing_columns:
         print(f"Error: the columns '{missing_columns}' are missing from the input file.")
@@ -35,14 +45,14 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     feature_columns = [column for column in df.columns if column not in META_COLUMNS]
 
     # Pipeline B: no splitting (the whole dataset is used)
-    print("Debugging 3: pipeline B")
+    print("No split in Pipeline B")
     #print(f"test rows: {test_mask.sum()}")
     x = df[feature_columns]
     y = df[target]
 
     # Drop columns with 0 variance values
     zero_variance_columns = [column for column in feature_columns if x[column].std() == 0]
-    print(f"Debugging 4: dropping zero-variance columns. Length: {len(zero_variance_columns)}.")
+    print(f"Dropping zero-variance columns. Length: {len(zero_variance_columns)}.")
     if zero_variance_columns:
         x = x.drop(columns=zero_variance_columns)
         #x_train = x_train.drop(columns=zero_variance_columns)
@@ -50,17 +60,15 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     feature_columns_kept= list(x.columns)
     maximum_features = min(max_features, len(feature_columns_kept))
 
-    print(f"Debugging 5: afterdropping zero-variance columns. Length: {len(x.columns)}.")
+    print(f"Afterdropping zero-variance columns. Length: {len(x.columns)}.")
     #maximum_features = min(max_features, len(x.columns)) # to remove maybe? this is for debugging to cap the max_features to the available features, as 1547 bugs and comes down to 1528
     #x_train, x_test, y_train, y_test = train_test_split(
     #    x, y, test_size = 0.2, random_state = 42
     #)
-    print(f"Debugging 6: Full dataset size: {len(x)}")
+    print(f"Full dataset size: {len(x)}")
     sel = MRMR(
         method="MID",
-        #method="FCQ",
-        regression=True, #changing due to continuous targets
-        #max_features=max_features,
+        regression=True, # continuous targets
         max_features=maximum_features,
     )
     print("Running mRMR now.")
@@ -74,7 +82,7 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     selected = [f for f in feature_columns_kept if f not in sel.features_to_drop_]
     print(f"Selected {len(selected)} features.")
 
-    print("Debugging 7/2: ranking the features")
+    print("Ranking the features")
     mi_scores = mutual_info_regression(x[selected], y, random_state=42)
     mi_ranking = pd.Series(mi_scores, index=selected).sort_values(ascending=False)
     print("Top 10 features by relevance:")
@@ -86,7 +94,7 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
 
     if not output_path.endswith(".csv"):
         output_path = output_path.rsplit(".", 1)[0] + ".csv"
-    print("Debugging 7: saving output")
+    print("Saving output")
     df_out.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
