@@ -1,5 +1,20 @@
 """
 SVM for Pipeline B (HC50 + MIC combined)
+Trains an SVM (RBF, class_weight="balanced") on the union of the LASSO-selected HC50 and MIC features from 
+Pipeline B, merging the two feature sets on SequenceIndex/Sequence and checking that any overlapping features 
+match between the two before combining. Uses the same train/test split as the rest of Pipeline B. Reports 
+classification metrics + 5-fold CV, and saves a confusion matrix plot.
+Also fits a second SVM (probability=True) and runs SHAP to compare which descriptors drive the rare 
+"Both Active/Toxic" class vs. the majority "Inactive" class (top 15 each, plus Jaccard overlap between them).
+Input:
+- lasso_pipeline_B_HC50_features.csv and lasso_pipeline_B_MIC_features.csv (LASSO-selected feature matrices, 
+with Split column for train/test and Class column for labels)
+Output:
+- Prints to the console: HC50/MIC/overlap/union feature counts, train/test sizes, feature count, classification 
+report, mean +/- std of 5-fold CV weighted F1, top 15 descriptors for rare vs. majority class + Jaccard overlap
+- svm_confusion_matrix_pipeline_B_UNION.png
+- shap_pipeline_B_union_with_shap_mean_abs.csv - mean |SHAP value| per feature, per class
+- shap_bar_pipeline_B_UNION_<class>.png - one SHAP bar plot per class
 """
 import pandas as pd
 import numpy as np
