@@ -1,6 +1,13 @@
 """
-SVM for pipeline B
-MORE HERE
+Pipeline B SVM (HC50)
+This script fits the SVM directly on the pipeline B train/test split (no SMOTE step here,
+since the split/oversampling happens earlier in this pipeline) and evaluates it.
+Inputs:
+- lasso_pipeline_B_HC50_features.csv
+Output:
+- prints to the console feature/train/test counts, classification report, 5-fold CV
+weighted F1 (mean +/- std).
+- svm_confusion_matrix_pipeline_B_HC50.png
 """
 import pandas as pd
 from sklearn.svm import SVC
