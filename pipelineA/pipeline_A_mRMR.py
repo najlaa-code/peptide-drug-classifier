@@ -21,13 +21,13 @@ META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic", "
 
 
 def main(input_path: str, output_path:str, max_features:int, target: str):
-    print("Debugging 1: loading data or not")
+    print("Loading data")
     try:
         df = pd.read_csv(input_path)
     except Exception:
         print(f"Error: the file '{input_path}' could not be loaded.")
         sys.exit(1)
-    print(f"Debugging 2: data is loaded. Rows: {len(df)} and columns: {len(df.columns)}.")
+    print(f"Data is loaded. Rows: {len(df)} and columns: {len(df.columns)}.")
     missing_columns = [column for column in META_COLUMNS if column not in df.columns]
     if missing_columns:
         print(f"Error: the columns '{missing_columns}' are missing from the input file.")
@@ -38,7 +38,7 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     # splitting
     train_mask = df["Split"] == "train"
     test_mask = df["Split"]== "test"
-    print("Debugging 3: test/train split")
+    print("Test/train split")
     print(f"test rows: {test_mask.sum()}")
 
     x_train = df.loc[train_mask, feature_columns]
@@ -49,7 +49,7 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
 
     # Drop columns with 0 variance values
     zero_variance_columns = [column for column in feature_columns if x_train[column].std()==0]
-    print(f"Debugging 4: dropping zero-variance columns. Length: {len(zero_variance_columns)}.")
+    print(f"Dropping zero-variance columns. Length: {len(zero_variance_columns)}.")
     if zero_variance_columns:
         #x = x.drop(columns=zero_variance_columns)
         x_train = x_train.drop(columns=zero_variance_columns)
@@ -57,12 +57,12 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     feature_columns_kept= list(x_train.columns)
     maximum_features = min(max_features, len(feature_columns_kept))
 
-    print(f"Debugging 5: afterdropping zero-variance columns. Length: {len(x_train.columns)}.")
+    print(f"Afterdropping zero-variance columns. Length: {len(x_train.columns)}.")
     #maximum_features = min(max_features, len(x.columns)) # to remove maybe? this is for debugging to cap the max_features to the available features, as 1547 bugs and comes down to 1528
     #x_train, x_test, y_train, y_test = train_test_split(
     #    x, y, test_size = 0.2, random_state = 42
     #)
-    print(f"Debugging 6: Train size: {len(x_train)}, Test size: {test_mask.sum()}")
+    print(f"Train size: {len(x_train)}, Test size: {test_mask.sum()}")
     sel = MRMR(
         method="MID",
         #method="FCQ",
@@ -81,7 +81,7 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     selected = [f for f in feature_columns_kept if f not in sel.features_to_drop_]
     print(f"Selected {len(selected)} features.")
 
-    print("Debugging 7/2: ranking the features")
+    print("Ranking the features")
     mi_scores = mutual_info_regression(x_train[selected], y_train, random_state=42)
     mi_ranking = pd.Series(mi_scores, index=selected).sort_values(ascending=False)
     print("Top 10 features by relevance:")
@@ -102,7 +102,7 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
 
     if not output_path.endswith(".csv"):
         output_path = output_path.rsplit(".", 1)[0] + ".csv"
-    print("Debugging 7: saving output")
+    print("Saving output")
     df_out.to_csv(output_path, index=False)
 
 if __name__ == "__main__":
