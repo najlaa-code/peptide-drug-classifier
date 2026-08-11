@@ -1,3 +1,7 @@
+"""
+Pipeline A Step 0
+Merges loc10hc50 / log10mic into the features file
+"""
 import argparse
 import sys
 import pandas as pd
