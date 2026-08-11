@@ -1,3 +1,11 @@
+"""
+Pipeline A Train/Test Split Script
+
+Adds a "Split" column ("train"/"test") to the dataset, one single split used by everything downstream in 
+Pipeline A (mRMR, LASSO, SVM, etc. all read this same column so the split stays consistent across the whole 
+pipeline).
+
+"""
 import argparse
 import pandas as pd
 from sklearn.model_selection import train_test_split
