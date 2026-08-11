@@ -1,11 +1,19 @@
 """"
-Pipeline A SMOTE
-SMOTE oversamples the minority classes of the training set by generating synthetic points between real minority-class neighbors.
+Pipeline A SMOTE + SVM (HC50) 
+This script oversamples the minority classes in the training set with SMOTE before fitting the SVM by making
+synthetic points between real minority-class neighbors so the model sees more of them.
 
+Inputs:
+- lasso_pipeline_A_HC50_features.csv
 
+Output:
+- prints to the console feature/train/test counts, class counts after SMOTE, train/test accuracy, macro F1, 
+weighted F1, classification report, 5-fold CV macro/weighted (mean +/- std).
+- pipeline_A_SMOTE_confusion_hc50.png
 
+Sources: https://machinelearningmastery.com/smote-oversampling-for-imbalanced-classification/
+https://www.geeksforgeeks.org/machine-learning/smote-for-imbalanced-classification-with-python/
 """
-
 import argparse
 import numpy as np
 import pandas as pd
