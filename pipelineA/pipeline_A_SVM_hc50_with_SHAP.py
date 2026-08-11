@@ -1,6 +1,21 @@
 """
-SVM for pipeline A along with SHAP
-MORE HERE
+SVM for pipeline A (HC50) along with SHAP
+Train an SVM (RBF, class_weight="balanced") on the LASSO selected HC50 features from pipeline A. Uses the same 
+train/test split. Reports classification metrictions + 5 fold CV + saves a confusion matrix plot.
+
+Trains a 2nd SVM (same parameters, probability=True due to KernelExplainer needing predict_proba). Runs SHAP on 
+it to see which descriptors are actually driving the predictions. Special emphasis on the minority against the 
+majority class.
+
+Input:
+
+Output:
+- prints to the console: train/test sizes, feature count, classification report, mean, +/- std of 5-fold CV 
+weighted F1, top-15 descriptors for the rare class, top-15 for the majority class, shared descriptor count 
++ Jaccard overlap
+- svm_confusion_matrix_pipeline_A_HC50.png
+- shap_pipeline_A_hc50_mean_abs.csv
+-shap_bar_pipeline_A_HC50_<class>.png (one bar plot per class)
 """
 import pandas as pd
 from sklearn.svm import SVC
