@@ -1,10 +1,25 @@
 
 """
-Feature selection script 3: mRMR
-- finds features with high relevance to the drug class
-- finds features wtih low redundancy with each other
-input: since this is pipeline A, features from feature extraction propy3
-output: features_mrmr.csv
+Pipeline A mRMR
+
+Uses mRMR (Minimum Redundancy Maximum Relevance) to pick features that are strongly related to the target 
+(log10hc50 or log10mic) but not too redundant with each other. Only fits on the train split.
+
+Notes:
+- Zero-variance columns get dropped from the training features before mRMR runs.
+- MID method is used (mutual information)
+- mRMR is very slow, it takes about 2 hours to run on the full descriptor set.
+
+Input:
+- CSV from Script 1 (feature extraction), needs a Split column ("train"/"test") and the meta columns 
+(SequenceIndex, Sequence, Class, log10hc50, log10mic, Split)
+- --target: log10hc50 or log10mic (required)
+- --max_features: how many features to keep (default 400)
+
+Output:
+- CSV with the meta columns + the selected features, for all rows (train and test), written to --output
+- Printed: row/column counts, zero-variance columns dropped, train/test sizes, number of features selected, 
+mRMR runtime, top 10 features by mutual information
 """
 
 import argparse
