@@ -1,5 +1,19 @@
-"""Feature Selection
-fitting std scaler only on training set, as part of Pipeline A
+"""
+Pipeline A Feature Scaling
+
+Standardizes all feature columns with StandardScaler (z = (x - mean) / std). The scaler is fit on the train 
+split only, then applied to the entire dataset (train + test).
+
+Input:
+    - CSV from Script 1 (feature extraction), needs a Split column
+      ("train"/"test") and the meta columns (SequenceIndex, Sequence, Class,
+      log10hc50, log10mic, Split)
+
+Output:
+    - Scaled CSV (meta columns + scaled features, all rows), written to
+      --output
+    - Printed: sequence count, feature count
+
 """
 import sys
 import argparse
