@@ -1,6 +1,16 @@
 """
 Pipeline B - Hyperparameter Search
+Grid search over feature count (k, via SelectKBest/f_classif), SVM C, and gamma to find the best combo for
+the 4-class AMP classification (RBF kernel, class_weight="balanced"). Restricted to the train split from
+pipeline_B_split.py. Runs before mRMR, to get the k that feeds mRMR's max_features selected.
 Src: https://pmc.ncbi.nlm.nih.gov/articles/PMC12848716/
+Input:
+- features_scaled_pipeline_B_split.csv (output of pipeline_B_split.py), needs a Split column ("train"/"test")
+and the meta columns (SequenceIndex, Sequence, Class, log10hc50, log10mic, Split).
+Output:
+- Printed: train row count vs. total/held-out test rows, best k/C/gamma, best CV balanced accuracy, per-class
+classification report.
+- classification_gridsearch_results_pipelineB.txt
 """
 import pandas as pd
 import numpy as np
