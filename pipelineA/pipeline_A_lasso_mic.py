@@ -1,13 +1,29 @@
 """
-This script implements LASSO regression from Scikit-Learn and it follows previous inputs from feature selection and mRMR.
-This outputs 2 CSV files:
-    1) All surviving features.
-    2) All features with a boolean column, which shows what was excluded and included in the first CSV.
-    3) A bar chart.
-
-Run it using this command:
-
-This LASSO script differs from script 4 as the y is replaced by the HC50 values from features outputted from mRMR.
+Pipeline A - LASSO Regression (MIC)
+Takes mRMR selected features and runs LASSO on top (LassoCV, max_iter=10_000 since default 1000 wasn't enough given how many
+features there are and it kept throwing convergence warnings). LASSO L1 penalty shrinks coefficients of 
+less-informative features to 0, so whatever survives goes forward in the pipeline.
+Notes:
+- Only fit on the train split. Test stays untouched.
+Input:
+    - features_mRMR_pipeline_A_mic.csv (output of script 3, mRMR)
+Output:
+    - lasso_pipeline_A_MIC_features.csv - surviving features + meta columns,
+      all rows (train + test)
+    - lasso_pipeline_A_MIC_coefficients.csv - every feature, its LASSO
+      coefficient, and whether it was kept
+    - lasso_pipeline_A_MIC_coef_plot.png - bar chart, all surviving features
+    - lasso_path_plot_pipeline_A_mic - regularization path, all features
+    - lasso_path_top10_pipeline_A_mic / lasso_path_bottom10_pipeline_A_mic -
+      regularization path, top/bottom 10 by |coefficient|
+    - lasso_bar_top10_pipeline_A_mic / lasso_bar_bottom10_pipeline_A_mic -
+      bar charts, top/bottom 10 by |coefficient|
+    - lasso_correlation_heatmap_pipeline_A_mic - correlation heatmap,
+      surviving features
+    - lasso_correlation_heatmap_excluded_pipeline_A_mic - correlation
+      heatmap, excluded features
+    - Printed: feature matrix shape, train rows/feature count, LASSO runtime,
+      counts of features before/after/excluded
 """
 
 # LASSO
