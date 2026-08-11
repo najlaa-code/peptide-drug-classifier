@@ -16,9 +16,7 @@ from feature_engine.selection import MRMR
 import time
 from sklearn.feature_selection import mutual_info_regression
 
-#META_COLUMNS = ["SequenceIndex", "Sequence", "Class"]
 META_COLUMNS = ["SequenceIndex", "Sequence", "Class", "log10hc50", "log10mic", "Split"]
-
 
 def main(input_path: str, output_path:str, max_features:int, target: str):
     print("Loading data")
@@ -43,10 +41,6 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
 
     x_train = df.loc[train_mask, feature_columns]
     y_train = df.loc[train_mask, target]
-
-    #x = df[feature_columns]
-    #y = df[target]
-
     # Drop columns with 0 variance values
     zero_variance_columns = [column for column in feature_columns if x_train[column].std()==0]
     print(f"Dropping zero-variance columns. Length: {len(zero_variance_columns)}.")
@@ -58,16 +52,10 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     maximum_features = min(max_features, len(feature_columns_kept))
 
     print(f"Afterdropping zero-variance columns. Length: {len(x_train.columns)}.")
-    #maximum_features = min(max_features, len(x.columns)) # to remove maybe? this is for debugging to cap the max_features to the available features, as 1547 bugs and comes down to 1528
-    #x_train, x_test, y_train, y_test = train_test_split(
-    #    x, y, test_size = 0.2, random_state = 42
-    #)
     print(f"Train size: {len(x_train)}, Test size: {test_mask.sum()}")
     sel = MRMR(
-        method="MID",
-        #method="FCQ",
-        regression=True, #changing due to continuous targets
-        #max_features=max_features,
+        method="MID", # using mutual information
+        regression=True, #continuous targets
         max_features=maximum_features,
     )
     print("Running mRMR now.")
@@ -90,16 +78,6 @@ def main(input_path: str, output_path:str, max_features:int, target: str):
     # apply the same transformations to all rows
     df_out= df[[column for column in META_COLUMNS if column in df.columns]].copy()
     df_out = pd.concat([df_out, df[selected].reset_index(drop=True)], axis=1)
-
-
-
-    #selected = [f for f in x.columns if f not in sel.features_to_drop_]
-    #print(f"Selected {len(selected)} features:")
-    #print(selected)
-    #x_selected = x[selected]
-    #df_out = df[META_COLUMNS].copy()
-    #df_out = pd.concat([df_out, x_selected.reset_index(drop=True)], axis=1)
-
     if not output_path.endswith(".csv"):
         output_path = output_path.rsplit(".", 1)[0] + ".csv"
     print("Saving output")
