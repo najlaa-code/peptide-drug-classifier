@@ -1,6 +1,17 @@
 """
-SVM for pipeline A
-MORE HERE
+SVM for Pipeline A (HC50)
+
+Trains an SVM (RBF, class_weight="balanced") on the LASSO-selected HC50 features from Pipeline A, using the 
+same train/test split as the rest of Pipeline A. Reports classification metrics + 5-fold CV, and saves a 
+confusion matrix plot.
+
+Input:
+- lasso_pipeline_A_HC50_features.csv (LASSO-selected feature matrix, with Split column for train/test and 
+Class column for labels)
+
+Output:
+- Prints to the console: train/test sizes, feature count, classification report, mean, +/- std of 5-fold CV weighted F1
+- svm_confusion_matrix_pipeline_A_HC50.png  
 """
 import pandas as pd
 from sklearn.svm import SVC
